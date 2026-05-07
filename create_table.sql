@@ -1,4 +1,4 @@
-
+PRAGMA foreign_keys = ON;
 -- 1. 회원(members) 테이블
 CREATE TABLE members (
     member_id INTEGER PRIMARY KEY AUTOINCREMENT,
