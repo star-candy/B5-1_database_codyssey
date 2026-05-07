@@ -435,3 +435,74 @@ CREATE INDEX idx_books_title ON books(title);
 ### 7. JOIN과 GROUP BY의 사용 방식
 ![alt text](images/t2.jpg)
 ![alt text](images/t3.jpg)
+
+
+------
+## 8-1 보너스 과제 1. 조인 1개를 두 방식으로 풀기
+- natural join 통해 클린코드 책 대출한 사람의 email 판단
+
+```
+SELECT email 
+FROM members
+NATURAL JOIN rentals
+NATURAL JOIN books
+WHERE title = '클린 코드';
+```
+- 서브 쿼리 통한 join문 대체 가능
+
+```
+SELECT email 
+FROM members 
+WHERE member_id IN (
+    SELECT member_id 
+    FROM rentals 
+    WHERE book_id = (SELECT book_id FROM books WHERE title = '클린 코드')
+);
+```
+## 8-2 데이터 정합성 깨뜨려 보기 (FK 제약조건 에러)
+-  회원가입을 하지 않은 존재하지 않는 member_id=999를 대출 기록에 INSERT 시도.
+```
+INSERT INTO rentals (member_id, book_id, rental_date) 
+VALUES (999, 1, '2026-05-06');
+```
+
+- 결과 : foreign key 조건 불만족에 따라 insert되지 않는다.
+ ```
+ Runtime error: FOREIGN KEY constraint failed - 
+ ```
+
+
+ ## 8-3 미니 리포트
+
+ ### 1. 가장 인기있는 도서 top3 파악
+```
+SELECT title, COUNT(rental_id) AS total_rentals
+FROM books
+NATURAL LEFT JOIN rentals
+GROUP BY book_id, title
+ORDER BY total_rentals DESC
+LIMIT 3;
+```
+
+
+### 2. 가장 인기 없는 도서 top3 파악
+```
+SELECT category_name, COUNT(rental_id) AS total_rentals
+FROM categories
+NATURAL LEFT JOIN books
+NATURAL LEFT JOIN rentals
+GROUP BY category_id, category_name
+ORDER BY total_rentals ASC
+LIMIT 3;
+```
+
+
+### 3. 가장 대출을 많이 한 사람 top3 파악
+```
+SELECT name, COUNT(rental_id) AS rental_count
+FROM members
+NATURAL LEFT JOIN rentals
+GROUP BY member_id, name
+ORDER BY rental_count DESC
+LIMIT 3;
+```
