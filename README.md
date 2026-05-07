@@ -467,10 +467,6 @@ VALUES (999, 1, '2026-05-06');
 ```
 
 - 결과 : foreign key 조건 불만족에 따라 insert되지 않는다.
- ```
- Runtime error: FOREIGN KEY constraint failed - 
- ```
-
 
  ## 8-3 미니 리포트
 
